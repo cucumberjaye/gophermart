@@ -83,7 +83,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				log.Err(err).Send()
+				//log.Err(err).Send()
 				break
 			}
 			if response.StatusCode == 429 {
