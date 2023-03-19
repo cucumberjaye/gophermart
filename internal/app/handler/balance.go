@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/cucumberjaye/gophermart/internal/app/middleware"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
@@ -42,23 +41,23 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
-	if !ok {
-		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Send()
-		return
-	}
-
-	orderID, err := strconv.Atoi(input.Order)
+	ok, err := luhn.Valid(input.Order)
 	if err != nil {
 		log.Error().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if !luhn.Valid(orderID) {
+	if !ok {
 		log.Error().Err(ErrInvalidOrder).Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	if !ok {
+		http.Error(w, "error on server", http.StatusInternalServerError)
+		log.Error().Err(errors.New("id must be string")).Send()
 		return
 	}
 

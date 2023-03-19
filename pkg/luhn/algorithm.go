@@ -1,7 +1,13 @@
 package luhn
 
-func Valid(number int) bool {
-	return (number%10+checksum(number/10))%10 == 0
+import "strconv"
+
+func Valid(orderByte string) (bool, error) {
+	number, err := strconv.Atoi(orderByte)
+	if err != nil {
+		return false, err
+	}
+	return (number%10+checksum(number/10))%10 == 0, nil
 }
 
 func checksum(number int) int {

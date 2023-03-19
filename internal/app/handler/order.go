@@ -3,8 +3,8 @@ package handler
 import (
 	"database/sql"
 	"errors"
+	"io"
 	"net/http"
-	"strconv"
 
 	"github.com/cucumberjaye/gophermart/internal/app/middleware"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
@@ -15,12 +15,24 @@ import (
 
 func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 	var order models.Order
-	var orderID int
 
-	err := render.Decode(r, &orderID)
+	orderID, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Error().Err(err).Send()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	ok, err := luhn.Valid(string(orderID))
 	if err != nil {
 		log.Error().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if !ok {
+		log.Error().Err(ErrInvalidOrder).Send()
+		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -31,13 +43,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !luhn.Valid(orderID) {
-		log.Error().Err(ErrInvalidOrder).Send()
-		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
-		return
-	}
-
-	order.ID = strconv.Itoa(orderID)
+	order.ID = string(orderID)
 	order.UserID = userID
 	err = h.service.SetOrder(order)
 	if err != nil {
