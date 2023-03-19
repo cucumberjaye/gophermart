@@ -67,13 +67,6 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 		OrderAlias: (*OrderAlias)(o),
 	}
 
-	date, err := time.Parse(time.RFC3339, aliasValue.UploadedAt)
-	if err != nil {
-		return err
-	}
-
-	o.UploadedAt = date
-
 	if err := json.Unmarshal(data, aliasValue); err != nil {
 		return err
 	}
