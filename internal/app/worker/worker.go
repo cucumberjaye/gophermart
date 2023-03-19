@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -38,7 +37,7 @@ func New(repo AccrualRepository) *Worker {
 }
 
 func (w *Worker) Start(pctx context.Context) {
-	fmt.Println("worker running")
+	log.Info().Msg("worker running")
 	ctx, cancelFunc := context.WithCancel(pctx)
 	w.cancelFunc = cancelFunc
 	w.wg.Add(1)
@@ -56,14 +55,16 @@ func (w *Worker) Stop() {
 
 func (w *Worker) ordersGetter(ctx context.Context) {
 	defer w.wg.Done()
+	ticker := time.NewTicker(time.Second * 3)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		default:
+		case <-ticker.C:
 			orders, err := w.repo.GetWaitingOrders()
 			if err != nil {
-				//log.Err(err).Send()
+				log.Err(err).Send()
 				break
 			}
 			for i := range orders {
@@ -82,7 +83,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				//log.Err(err).Send()
+				log.Err(err).Send()
 				break
 			}
 			if response.StatusCode == 429 {
@@ -94,12 +95,12 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			err = render.DecodeJSON(response.Body, &input)
 			response.Body.Close()
 			if err != nil {
-				//log.Err(err).Send()
+				log.Err(err).Send()
 				break
 			}
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
-				//log.Err(err).Send()
+				log.Err(err).Send()
 			}
 		}
 	}
