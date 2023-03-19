@@ -1,12 +1,14 @@
 package app
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/cucumberjaye/gophermart/configs"
 	"github.com/cucumberjaye/gophermart/internal/app/handler"
 	"github.com/cucumberjaye/gophermart/internal/app/repository/postgresdb"
 	service "github.com/cucumberjaye/gophermart/internal/app/sevice"
+	"github.com/cucumberjaye/gophermart/internal/app/worker"
 	"github.com/cucumberjaye/gophermart/pkg/postgres"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
@@ -32,6 +34,9 @@ func New() (*App, error) {
 	martService := service.New(martRepository)
 
 	martHandler := handler.New(martService)
+
+	worker := worker.New(martRepository)
+	go worker.Start(context.Background())
 
 	router := chi.NewRouter()
 	router.Mount("/api", martHandler.InitRoutes())

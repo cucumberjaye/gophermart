@@ -60,6 +60,7 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 
 	aliasValue := &struct {
 		*OrderAlias
+		Status  string  `json:"status"`
 		Accrual float32 `json:"accrual"`
 	}{
 		OrderAlias: (*OrderAlias)(o),
@@ -68,7 +69,16 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, aliasValue); err != nil {
 		return err
 	}
-
+	switch aliasValue.Status {
+	case "REGISTERED":
+		o.Status = 0
+	case "PROCESSING":
+		o.Status = 1
+	case "INVALID":
+		o.Status = 2
+	case "PROCESSED":
+		o.Status = 3
+	}
 	o.Accrual = int(aliasValue.Accrual * 100)
 
 	return nil
