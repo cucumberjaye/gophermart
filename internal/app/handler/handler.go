@@ -52,7 +52,7 @@ func New(service MartService) *Handler {
 func (h *Handler) InitRoutes() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Use(middleware.GzipCompress, middleware.GzipDecompress)
+	//r.Use(middleware.GzipCompress, middleware.GzipDecompress)
 
 	r.Route("/user", func(r chi.Router) {
 		r.Post("/register", h.register)

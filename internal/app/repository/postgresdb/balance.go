@@ -11,14 +11,14 @@ import (
 func (r *Postgres) GetBalance(userID string) (models.Balance, error) {
 	var balance models.Balance
 
-	var accrualSql sql.NullInt32
+	var accrualSQL sql.NullInt32
 	accrualQuery := "SELECT SUM(accrual) FROM orders WHERE accrual > 0 and user_id=$1"
-	err := r.db.QueryRow(accrualQuery, userID).Scan(&accrualSql)
+	err := r.db.QueryRow(accrualQuery, userID).Scan(&accrualSQL)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return balance, err
 	}
-	if accrualSql.Valid {
-		balance.Current = int(accrualSql.Int32)
+	if accrualSQL.Valid {
+		balance.Current = int(accrualSQL.Int32)
 	}
 
 	var withdrawSQL sql.NullInt32
