@@ -10,6 +10,7 @@ import (
 	"github.com/cucumberjaye/gophermart/configs"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog/log"
 )
 
 const workers = 5
@@ -86,6 +87,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			}
 			if response.StatusCode == 429 {
 				time.Sleep(time.Second)
+				log.Info().Msg("to much")
 				break
 			}
 			var input models.Order
