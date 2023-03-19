@@ -18,20 +18,20 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 
 	orderID, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Error().Err(err).Stack().Send()
+		log.Error().Stack().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	ok, err := luhn.Valid(string(orderID))
 	if err != nil {
-		log.Error().Err(err).Stack().Send()
+		log.Error().Stack().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if !ok {
-		log.Error().Err(ErrInvalidOrder).Stack().Send()
+		log.Error().Stack().Err(ErrInvalidOrder).Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
 		return
 	}
@@ -39,7 +39,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Send()
+		log.Error().Stack().Err(errors.New("id must be string")).Send()
 		return
 	}
 
@@ -48,7 +48,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 	err = h.service.SetOrder(order)
 	if err != nil {
 		if errors.Is(err, ErrOrderExists) {
-			log.Error().Err(err).Stack().Send()
+			log.Error().Stack().Err(err).Send()
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}
@@ -56,7 +56,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-		log.Error().Err(err).Stack().Send()
+		log.Error().Stack().Err(err).Send()
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +68,7 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Stack().Send()
+		log.Error().Stack().Err(errors.New("id must be string")).Send()
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 		}
 
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(err).Stack().Send()
+		log.Error().Stack().Err(err).Send()
 		return
 	}
 
