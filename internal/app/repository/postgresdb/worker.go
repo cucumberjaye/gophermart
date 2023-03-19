@@ -39,7 +39,7 @@ func (r *Postgres) GetWaitingOrders() ([]string, error) {
 	return orders, nil
 }
 
-func (r *Postgres) UpdateOrder(order models.OrderAccrual) error {
+func (r *Postgres) UpdateOrder(order models.Order) error {
 	query := "UPDATE orders SET status=$1, accrual=$2, uploaded_at=$3 WHERE id=$4"
 	_, err := r.db.Exec(query, order.Status, order.Accrual, time.Now, order.ID)
 	return err

@@ -16,14 +16,14 @@ func (h *Handler) getBalance(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Send()
+		log.Error().Err(errors.New("id must be string")).Stack().Send()
 		return
 	}
 
 	output, err := h.service.GetBalance(userID)
 	if err != nil {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		return
 	}
 
@@ -36,20 +36,20 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 
 	err := render.DecodeJSON(r.Body, &input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	ok, err := luhn.Valid(input.Order)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if !ok {
-		log.Error().Err(ErrInvalidOrder).Send()
+		log.Error().Err(ErrInvalidOrder).Stack().Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
 		return
 	}
@@ -57,19 +57,19 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Send()
+		log.Error().Err(errors.New("id must be string")).Stack().Send()
 		return
 	}
 
 	err = h.service.Withdraw(userID, input)
 	if err != nil {
 		if errors.Is(err, ErrInsufficientFunds) {
-			log.Error().Err(err).Send()
+			log.Error().Err(err).Stack().Send()
 			http.Error(w, ErrInsufficientFunds.Error(), http.StatusPaymentRequired)
 			return
 		}
 
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -82,7 +82,7 @@ func (h *Handler) getWithdraws(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(errors.New("id must be string")).Send()
+		log.Error().Err(errors.New("id must be string")).Stack().Send()
 		return
 	}
 
@@ -94,7 +94,7 @@ func (h *Handler) getWithdraws(w http.ResponseWriter, r *http.Request) {
 		}
 
 		http.Error(w, "error on server", http.StatusInternalServerError)
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		return
 	}
 

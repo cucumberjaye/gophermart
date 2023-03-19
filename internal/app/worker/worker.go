@@ -16,7 +16,7 @@ const workers = 5
 
 type AccrualRepository interface {
 	GetWaitingOrders() ([]string, error)
-	UpdateOrder(models.OrderAccrual) error
+	UpdateOrder(models.Order) error
 }
 
 type Worker struct {
@@ -64,7 +64,7 @@ func (w *Worker) ordersGetter(ctx context.Context) {
 		case <-ticker.C:
 			orders, err := w.repo.GetWaitingOrders()
 			if err != nil {
-				log.Err(err).Send()
+				log.Err(err).Stack().Send()
 				break
 			}
 			for i := range orders {
@@ -83,7 +83,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				//log.Err(err).Send()
+				log.Err(err).Send()
 				break
 			}
 			if response.StatusCode == 429 {
@@ -91,16 +91,16 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 				log.Info().Msg("to much")
 				break
 			}
-			var input models.OrderAccrual
+			var input models.Order
 			err = render.DecodeJSON(response.Body, &input)
 			response.Body.Close()
 			if err != nil {
-				log.Err(err).Send()
+				log.Err(err).Stack().Send()
 				break
 			}
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
-				log.Err(err).Send()
+				log.Err(err).Stack().Send()
 			}
 		}
 	}

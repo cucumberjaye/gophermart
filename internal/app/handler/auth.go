@@ -22,21 +22,21 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 
 	err := render.DecodeJSON(r.Body, &input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = validator.New().Struct(&input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, fmt.Sprintf("invalid request body: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	err = h.service.CreateUser(input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		if errors.Is(err, ErrorLoginExists) {
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
@@ -47,7 +47,7 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 
 	token, err := h.service.GenerateToken(models.LoginUser(input))
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -67,21 +67,21 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 
 	err := render.DecodeJSON(r.Body, &input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = validator.New().Struct(&input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		http.Error(w, fmt.Sprintf("invalid request body: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	token, err := h.service.GenerateToken(input)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Error().Err(err).Stack().Send()
 		if errors.Is(err, ErrorWrongLoginOrPassword) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return

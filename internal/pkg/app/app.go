@@ -11,7 +11,9 @@ import (
 	"github.com/cucumberjaye/gophermart/internal/app/worker"
 	"github.com/cucumberjaye/gophermart/pkg/postgres"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 )
 
 type App struct {
@@ -20,6 +22,7 @@ type App struct {
 
 func New() (*App, error) {
 	configs.InitConfigs()
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
 	db, err := postgres.New()
 	if err != nil {
