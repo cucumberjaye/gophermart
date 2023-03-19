@@ -78,8 +78,8 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
-		case orderId := <-w.ch:
-			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderId)
+		case orderID := <-w.ch:
+			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
 				log.Err(err).Send()
 				break
@@ -90,6 +90,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			}
 			var input models.Order
 			err = render.DecodeJSON(response.Body, &input)
+			response.Body.Close()
 			if err != nil {
 				log.Err(err).Send()
 				break

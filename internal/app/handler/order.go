@@ -15,9 +15,9 @@ import (
 
 func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 	var order models.Order
-	var orderId int
+	var orderID int
 
-	err := render.Decode(r, &orderId)
+	err := render.Decode(r, &orderID)
 	if err != nil {
 		log.Error().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -31,13 +31,13 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !luhn.Valid(orderId) {
+	if !luhn.Valid(orderID) {
 		log.Error().Err(ErrInvalidOrder).Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	order.ID = strconv.Itoa(orderId)
+	order.ID = strconv.Itoa(orderID)
 	order.UserID = userID
 	err = h.service.SetOrder(order)
 	if err != nil {

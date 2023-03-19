@@ -14,14 +14,14 @@ import (
 )
 
 func (h *Handler) getBalance(w http.ResponseWriter, r *http.Request) {
-	userId, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(errors.New("id must be string")).Send()
 		return
 	}
 
-	output, err := h.service.GetBalance(userId)
+	output, err := h.service.GetBalance(userID)
 	if err != nil {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(err).Send()

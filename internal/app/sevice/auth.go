@@ -21,5 +21,5 @@ func (s *MartService) GenerateToken(loginUser models.LoginUser) (string, error) 
 		return "", err
 	}
 
-	return token.GenerateToken(user.Id, []byte(configs.SigningKey))
+	return token.GenerateToken(user.ID, []byte(configs.SigningKey))
 }

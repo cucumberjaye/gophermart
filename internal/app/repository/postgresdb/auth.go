@@ -3,6 +3,7 @@ package postgresdb
 import (
 	"database/sql"
 	"errors"
+
 	"github.com/cucumberjaye/gophermart/internal/app/handler"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
 )
@@ -32,7 +33,7 @@ func (r *Postgres) GetUser(loginUser models.LoginUser) (models.User, error) {
 	var user models.User
 
 	row := selectStmt.QueryRow(loginUser.Login, loginUser.Password)
-	err := row.Scan(&user.Id, &user.Login)
+	err := row.Scan(&user.ID, &user.Login)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return user, handler.ErrorWrongLoginOrPassword
