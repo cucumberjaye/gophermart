@@ -41,18 +41,13 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 	order.UserID = userID
 	err = h.service.SetOrder(order)
 	if err != nil {
-		if errors.Is(err, ErrBadOrder) {
-			log.Error().Err(err).Send()
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
 		if errors.Is(err, ErrOrderExists) {
 			log.Error().Err(err).Send()
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}
 		if errors.Is(err, ErrUserOrderExists) {
-			w.WriteHeader(http.StatusAccepted)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 		log.Error().Err(err).Send()
@@ -60,7 +55,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 }
 
 func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
