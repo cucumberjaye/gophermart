@@ -62,7 +62,7 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 		*OrderAlias
 		Status     string  `json:"status"`
 		Accrual    float32 `json:"accrual"`
-		UploadedAt string  `json:"-"`
+		UploadedAt string  `json:"uploaded_at"`
 	}{
 		OrderAlias: (*OrderAlias)(o),
 	}
@@ -81,6 +81,7 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 		o.Status = 3
 	}
 	o.Accrual = int(aliasValue.Accrual * 100)
+	o.UploadedAt = time.Now()
 
 	return nil
 }
