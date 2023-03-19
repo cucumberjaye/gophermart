@@ -60,11 +60,19 @@ func (o *Order) UnmarshalJSON(data []byte) error {
 
 	aliasValue := &struct {
 		*OrderAlias
-		Status  string  `json:"status"`
-		Accrual float32 `json:"accrual"`
+		Status     string  `json:"status"`
+		Accrual    float32 `json:"accrual"`
+		UploadedAt string  `json:"uploaded_at"`
 	}{
 		OrderAlias: (*OrderAlias)(o),
 	}
+
+	date, err := time.Parse(time.RFC3339, aliasValue.UploadedAt)
+	if err != nil {
+		return err
+	}
+
+	o.UploadedAt = date
 
 	if err := json.Unmarshal(data, aliasValue); err != nil {
 		return err
