@@ -76,6 +76,7 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNoContent)
+			w.Write([]byte{})
 			return
 		}
 
