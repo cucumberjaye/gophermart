@@ -42,27 +42,27 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(errors.New("id must be string")).Send()
 		return
 	}
 
-	orderId, err := strconv.Atoi(input.Order)
+	orderID, err := strconv.Atoi(input.Order)
 	if err != nil {
 		log.Error().Err(err).Send()
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if !luhn.Valid(orderId) {
+	if !luhn.Valid(orderID) {
 		log.Error().Err(ErrInvalidOrder).Send()
 		http.Error(w, ErrInvalidOrder.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	err = h.service.Withdraw(userId, input)
+	err = h.service.Withdraw(userID, input)
 	if err != nil {
 		if errors.Is(err, ErrInsufficientFunds) {
 			log.Error().Err(err).Send()
@@ -80,14 +80,14 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getWithdraws(w http.ResponseWriter, r *http.Request) {
-	userId, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(errors.New("id must be string")).Send()
 		return
 	}
 
-	output, err := h.service.GetWithdrawals(userId)
+	output, err := h.service.GetWithdrawals(userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNoContent)

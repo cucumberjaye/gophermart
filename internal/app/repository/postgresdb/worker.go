@@ -28,6 +28,10 @@ func (r *Postgres) GetWaitingOrders() ([]string, error) {
 		orders = append(orders, id)
 	}
 
+	if err := row.Err(); err != nil {
+		return nil, err
+	}
+
 	if len(orders) == 0 {
 		return nil, sql.ErrNoRows
 	}

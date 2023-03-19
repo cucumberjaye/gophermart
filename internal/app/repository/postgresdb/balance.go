@@ -21,14 +21,14 @@ func (r *Postgres) GetBalance(userID string) (models.Balance, error) {
 		balance.Current = int(accrualSql.Int32)
 	}
 
-	var withdrawSql sql.NullInt32
+	var withdrawSQL sql.NullInt32
 	withdrawQuery := "SELECT SUM(accrual) FROM orders WHERE accrual < 0 and user_id=$1"
-	err = r.db.QueryRow(withdrawQuery, userID).Scan(&withdrawSql)
+	err = r.db.QueryRow(withdrawQuery, userID).Scan(&withdrawSQL)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return balance, err
 	}
-	if withdrawSql.Valid {
-		balance.Withdrawn = int(withdrawSql.Int32)
+	if withdrawSQL.Valid {
+		balance.Withdrawn = int(withdrawSQL.Int32)
 	}
 
 	return balance, nil
@@ -51,20 +51,24 @@ func (r *Postgres) GetWithdrawals(userID string) ([]models.Withdraw, error) {
 
 	defer row.Close()
 
-	var withdraw []models.Withdraw = []models.Withdraw{}
+	var withdraw = []models.Withdraw{}
 
 	for row.Next() {
 		var tmp models.Withdraw
-		var sumSQl sql.NullInt32
-		err := row.Scan(&tmp.Order, &sumSQl, &tmp.ProcessedAt)
+		var sumSQL sql.NullInt32
+		err := row.Scan(&tmp.Order, &sumSQL, &tmp.ProcessedAt)
 		if err != nil {
 			return nil, err
 		}
-		if sumSQl.Valid {
-			tmp.Sum = int(sumSQl.Int32)
+		if sumSQL.Valid {
+			tmp.Sum = int(sumSQL.Int32)
 		}
 
 		withdraw = append(withdraw, tmp)
+	}
+
+	if err := row.Err(); err != nil {
+		return nil, err
 	}
 
 	if len(withdraw) == 0 {

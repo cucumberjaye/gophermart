@@ -30,8 +30,8 @@ const (
 )
 
 type Order struct {
-	Id         string    `json:"number"`
-	UserId     string    `json:"-"`
+	ID         string    `json:"number"`
+	UserID     string    `json:"-"`
 	Accrual    int       `json:"accrual,omitempty"`
 	Status     status    `json:"status"`
 	UploadedAt time.Time `json:"uploaded_at"`

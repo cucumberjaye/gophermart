@@ -3,11 +3,12 @@ package middleware
 import (
 	"compress/gzip"
 	"context"
-	"github.com/cucumberjaye/gophermart/configs"
-	"github.com/cucumberjaye/gophermart/pkg/token"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/cucumberjaye/gophermart/configs"
+	"github.com/cucumberjaye/gophermart/pkg/token"
 )
 
 type gzipWriter struct {
@@ -74,6 +75,5 @@ func Authentication(next http.Handler) http.Handler {
 			}
 		}
 		http.Error(w, "bad authorization token", http.StatusUnauthorized)
-		return
 	})
 }

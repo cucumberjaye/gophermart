@@ -83,4 +83,5 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte{})
 }

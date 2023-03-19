@@ -24,7 +24,7 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(errors.New("id must be string")).Send()
@@ -37,8 +37,8 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order.Id = strconv.Itoa(orderId)
-	order.UserId = userId
+	order.ID = strconv.Itoa(orderId)
+	order.UserID = userID
 	err = h.service.SetOrder(order)
 	if err != nil {
 		if errors.Is(err, ErrBadOrder) {
@@ -64,14 +64,14 @@ func (h *Handler) setOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
-	userId, ok := r.Context().Value(middleware.UserID("user_id")).(string)
+	userID, ok := r.Context().Value(middleware.UserID("user_id")).(string)
 	if !ok {
 		http.Error(w, "error on server", http.StatusInternalServerError)
 		log.Error().Err(errors.New("id must be string")).Send()
 		return
 	}
 
-	output, err := h.service.GetOrders(userId)
+	output, err := h.service.GetOrders(userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNoContent)
