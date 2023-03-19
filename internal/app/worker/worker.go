@@ -16,7 +16,7 @@ const workers = 5
 
 type AccrualRepository interface {
 	GetWaitingOrders() ([]string, error)
-	UpdateOrder(models.Order) error
+	UpdateOrder(models.OrderAccrual) error
 }
 
 type Worker struct {
@@ -91,7 +91,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 				log.Info().Msg("to much")
 				break
 			}
-			var input models.Order
+			var input models.OrderAccrual
 			err = render.DecodeJSON(response.Body, &input)
 			response.Body.Close()
 			if err != nil {
