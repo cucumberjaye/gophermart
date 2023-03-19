@@ -45,6 +45,20 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token, err := h.service.GenerateToken(models.LoginUser(input))
+	if err != nil {
+		log.Error().Err(err).Send()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "authorization",
+		Value:   token,
+		Expires: time.Now().Add(time.Hour),
+		Path:    "/",
+	})
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -83,5 +97,4 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		Path:    "/",
 	})
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte{})
 }

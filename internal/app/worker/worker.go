@@ -10,7 +10,6 @@ import (
 	"github.com/cucumberjaye/gophermart/configs"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
 	"github.com/go-chi/render"
-	"github.com/rs/zerolog/log"
 )
 
 const workers = 5
@@ -63,7 +62,8 @@ func (w *Worker) ordersGetter(ctx context.Context) {
 		default:
 			orders, err := w.repo.GetWaitingOrders()
 			if err != nil {
-				fmt.Println(err)
+				//log.Err(err).Send()
+				break
 			}
 			for i := range orders {
 				w.ch <- orders[i]
@@ -81,7 +81,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				log.Err(err).Send()
+				//log.Err(err).Send()
 				break
 			}
 			if response.StatusCode == 429 {
@@ -92,12 +92,12 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			err = render.DecodeJSON(response.Body, &input)
 			response.Body.Close()
 			if err != nil {
-				log.Err(err).Send()
+				//log.Err(err).Send()
 				break
 			}
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
-				log.Err(err).Send()
+				//log.Err(err).Send()
 			}
 		}
 	}
