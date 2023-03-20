@@ -68,6 +68,7 @@ func (w *Worker) ordersGetter(ctx context.Context) {
 				log.Err(err).Stack().Send()
 				break
 			}
+			fmt.Println("***", orders)
 			for i := range orders {
 				w.ch <- orders[i]
 			}
