@@ -11,7 +11,7 @@ func (s *MartService) GetBalance(userID string) (models.Balance, error) {
 		return balance, err
 	}
 
-	balance.Current += balance.Withdrawn
+	balance.Current -= balance.Withdrawn
 	return balance, nil
 }
 

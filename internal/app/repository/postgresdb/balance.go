@@ -28,7 +28,7 @@ func (r *Postgres) GetBalance(userID string) (models.Balance, error) {
 		return balance, err
 	}
 	if withdrawSQL.Valid {
-		balance.Withdrawn = int(withdrawSQL.Int32)
+		balance.Withdrawn = -int(withdrawSQL.Int32)
 	}
 
 	return balance, nil
