@@ -83,12 +83,12 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				//	log.Error().Err(err).Send()
+				log.Error().Err(err).Send()
 				break
 			}
 			if response.StatusCode == 429 {
 				time.Sleep(time.Second)
-				//	log.Info().Msg("to much")
+				log.Info().Msg("to much")
 				break
 			}
 			var input models.Order
@@ -100,7 +100,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			}
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
-				//	log.Error().Err(err).Stack().Send()
+				log.Error().Err(err).Stack().Send()
 			}
 		}
 	}
