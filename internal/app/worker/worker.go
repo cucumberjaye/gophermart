@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -98,6 +99,7 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 				log.Error().Err(err).Stack().Send()
 				break
 			}
+			fmt.Println("+++", input)
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
 				log.Error().Err(err).Stack().Send()
