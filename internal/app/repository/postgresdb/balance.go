@@ -61,7 +61,7 @@ func (r *Postgres) GetWithdrawals(userID string) ([]models.Withdraw, error) {
 			return nil, err
 		}
 		if sumSQL.Valid {
-			tmp.Sum = int(sumSQL.Int32)
+			tmp.Sum = -int(sumSQL.Int32)
 		}
 
 		withdraw = append(withdraw, tmp)
