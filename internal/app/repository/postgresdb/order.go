@@ -3,6 +3,7 @@ package postgresdb
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/cucumberjaye/gophermart/internal/app/handler"
 	"github.com/cucumberjaye/gophermart/internal/app/models"
@@ -59,6 +60,7 @@ func (r *Postgres) GetOrders(userID string) ([]models.Order, error) {
 			tmp.Accrual = int(accrualSQL.Int32)
 		}
 
+		fmt.Println("---", tmp)
 		orders = append(orders, tmp)
 	}
 

@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -84,7 +83,6 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 		case orderID := <-w.ch:
 			response, err := w.client.Get(configs.AccrualSystemAddress + "/api/orders/" + orderID)
 			if err != nil {
-				fmt.Println(1)
 				log.Error().Err(err).Send()
 				break
 			}
@@ -97,13 +95,11 @@ func (w *Worker) spawnWorkers(ctx context.Context) {
 			err = render.DecodeJSON(response.Body, &input)
 			response.Body.Close()
 			if err != nil {
-				fmt.Println(2)
 				log.Error().Err(err).Stack().Send()
 				break
 			}
 			err = w.repo.UpdateOrder(input)
 			if err != nil {
-				fmt.Println(3)
 				log.Error().Err(err).Stack().Send()
 			}
 		}

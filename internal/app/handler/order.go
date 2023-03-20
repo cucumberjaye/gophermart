@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -83,6 +84,8 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 		log.Error().Stack().Err(err).Send()
 		return
 	}
+
+	fmt.Println(output)
 
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, output)
