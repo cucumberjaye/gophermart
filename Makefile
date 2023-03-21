@@ -1,3 +1,4 @@
+.PHONE: run
 run:
 	go run cmd/gophermart/main.go
 

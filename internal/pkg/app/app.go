@@ -7,7 +7,7 @@ import (
 	"github.com/cucumberjaye/gophermart/configs"
 	"github.com/cucumberjaye/gophermart/internal/app/handler"
 	"github.com/cucumberjaye/gophermart/internal/app/repository/postgresdb"
-	service "github.com/cucumberjaye/gophermart/internal/app/sevice"
+	service "github.com/cucumberjaye/gophermart/internal/app/service"
 	"github.com/cucumberjaye/gophermart/internal/app/worker"
 	"github.com/cucumberjaye/gophermart/pkg/postgres"
 	"github.com/go-chi/chi/v5"
