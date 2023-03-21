@@ -1,6 +1,6 @@
 package handler
 
-/*import (
+import (
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -10,13 +10,13 @@ package handler
 	"testing"
 
 	"github.com/cucumberjaye/gophermart/internal/app/models"
-	"github.com/cucumberjaye/gophermart/internal/app/sevice/mocks"
+	"github.com/cucumberjaye/gophermart/internal/app/service/mocks"
 	"github.com/golang/mock/gomock"
+
 	"github.com/stretchr/testify/require"
 )
 
 func TestHandler_register(t *testing.T) {
-
 	tests := []struct {
 		name     string
 		body     io.Reader
@@ -67,8 +67,8 @@ func TestHandler_register(t *testing.T) {
 	}
 
 	ctrl := gomock.NewController(t)
-	as := mocks.NewMockAuthService(ctrl)
-	h := &Handler{authService: as}
+	svc := mocks.NewMockMartService(ctrl)
+	h := &Handler{service: svc}
 
 	r := h.InitRoutes()
 	ts := httptest.NewServer(r)
@@ -81,8 +81,12 @@ func TestHandler_register(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, ts.URL+"/user/register", tt.body)
 			request.RequestURI = ""
 
+			if tt.name == "ok" {
+				svc.EXPECT().GenerateToken(models.LoginUser(tt.user)).Return("test", tt.err)
+			}
+
 			if tt.name != "valid_err" {
-				as.EXPECT().CreateUser(tt.user).Return(tt.err)
+				svc.EXPECT().CreateUser(tt.user).Return(tt.err)
 			}
 			resp, err := http.DefaultClient.Do(request)
 			require.NoError(t, err)
@@ -152,8 +156,8 @@ func TestHandler_login(t *testing.T) {
 		},
 	}
 	ctrl := gomock.NewController(t)
-	as := mocks.NewMockAuthService(ctrl)
-	h := &Handler{authService: as}
+	svc := mocks.NewMockMartService(ctrl)
+	h := &Handler{service: svc}
 
 	r := h.InitRoutes()
 	ts := httptest.NewServer(r)
@@ -167,7 +171,7 @@ func TestHandler_login(t *testing.T) {
 			request.RequestURI = ""
 
 			if tt.name != "valid_err" {
-				as.EXPECT().GenerateToken(tt.user).Return(tt.returning, tt.err)
+				svc.EXPECT().GenerateToken(tt.user).Return(tt.returning, tt.err)
 			}
 			resp, err := http.DefaultClient.Do(request)
 			require.NoError(t, err)
@@ -185,4 +189,4 @@ func TestHandler_login(t *testing.T) {
 			require.Equal(t, tt.response, string(resBody))
 		})
 	}
-}*/
+}
