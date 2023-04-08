@@ -1,25 +1,12 @@
-# go-musthave-diploma-tpl
-
-Шаблон репозитория для индивидуального дипломного проекта курса «Go-разработчик»
-
-# Начало работы
-
-1. Склонируйте репозиторий в любую подходящую директорию на вашем компьютере.
-2. В корне репозитория выполните команду `go mod init <name>` (где `<name>` — адрес вашего репозитория на GitHub без
-   префикса `https://`) для создания модуля
-
-# Обновление шаблона
-
-Чтобы иметь возможность получать обновления автотестов и других частей шаблона, выполните команду:
-
-```
-git remote add -m master template https://github.com/yandex-praktikum/go-musthave-diploma-tpl.git
-```
-
-Для обновления кода автотестов выполните команду:
-
-```
-git fetch template && git checkout template/master .github
-```
-
-Затем добавьте полученные изменения в свой репозиторий.
+![image](https://user-images.githubusercontent.com/101933425/230713227-5b584e35-0f87-489c-a45f-fb218e52e2e3.png)
+![image](https://user-images.githubusercontent.com/101933425/230713258-83641533-3c01-4438-b7b0-a73ba146b1ef.png)
+![image](https://user-images.githubusercontent.com/101933425/230713291-8968b48e-ef59-4de6-95c6-84bc42ca4de8.png)
+![image](https://user-images.githubusercontent.com/101933425/230713321-c7930df3-258b-463e-86cd-f31e8e54e201.png)
+![image](https://user-images.githubusercontent.com/101933425/230713343-b0659aba-0cf5-4f9e-8613-b2363c7c67f6.png)
+![image](https://user-images.githubusercontent.com/101933425/230713362-d545ed3a-fe2e-4f64-8a3e-3a63ae1f3868.png)
+![image](https://user-images.githubusercontent.com/101933425/230713385-4e7784fa-375b-4a06-b177-288e345f477f.png)
+![image](https://user-images.githubusercontent.com/101933425/230713404-4429f2c7-5c56-474f-ac03-8d69c02d58ae.png)
+![image](https://user-images.githubusercontent.com/101933425/230713416-d73fcfd6-2d79-460a-9f8b-f61a4dd81f52.png)
+![image](https://user-images.githubusercontent.com/101933425/230713426-619646c3-82a3-4ac4-84d6-4fba1691bd90.png)
+![image](https://user-images.githubusercontent.com/101933425/230713447-30832882-b9a9-4b34-b9d5-4af1d28f31aa.png)
+![image](https://user-images.githubusercontent.com/101933425/230713462-c03ba9a0-da28-4549-989f-a2a80101ef99.png)
